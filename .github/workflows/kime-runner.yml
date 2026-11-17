@@ -30,4 +30,6 @@ jobs:
         run: node run.mjs
         env:
           KIME_RUNNER_KEY: ${{ secrets.KIME_RUNNER_KEY }}
+          KIME_STAFF_KEY: ${{ secrets.KIME_STAFF_KEY }}
+          CRM_SITE_PASSWORD: ${{ secrets.CRM_SITE_PASSWORD }}
           CRM_URL: ${{ vars.CRM_URL }}
