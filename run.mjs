@@ -37,6 +37,8 @@ if (pwBox && !isCrm) {
   }
 }
 
+// Leave the page first: going from the CRM to the same address with only #runner added would not reload it.
+await page.goto('about:blank');
 await page.goto(base + '#runner=' + key, { waitUntil: 'domcontentloaded', timeout: 90000 });
 let status = 'waiting';
 for (let i = 0; i < 90 && status === 'waiting'; i++) {
