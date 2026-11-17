@@ -25,13 +25,14 @@ page.on('pageerror', (e) => errors.push(e.message));
 // Netlify site password page: fill it once, then open the CRM with the runner key.
 await page.goto(base, { waitUntil: 'domcontentloaded', timeout: 90000 });
 const pwBox = await page.$('input[type="password"]');
-const isCrm = await page.evaluate(() => /KIME FIT OPERATIONS|__bundler/.test(document.documentElement.innerHTML)).catch(() => false);
+// The CRM's own staff sign-in also has a password box, so only treat it as Netlify's page when the CRM isn't there.
+const isCrm = await page.evaluate(() => /OPERATIONS SYSTEM|__bundler|syWarnText/.test(document.documentElement.innerHTML)).catch(() => false);
 if (pwBox && !isCrm) {
   if (!sitePw) { console.error('The CRM site asks for a password. Add the CRM_SITE_PASSWORD secret.'); await browser.close(); process.exit(1); }
   await pwBox.fill(sitePw);
   await Promise.all([page.waitForLoadState('domcontentloaded').catch(() => {}), pwBox.press('Enter')]);
   await page.waitForTimeout(3000);
-  if (await page.$('input[type="password"]') && !(await page.evaluate(() => /__bundler/.test(document.documentElement.innerHTML)).catch(() => false))) {
+  if (await page.$('input[type="password"]') && !(await page.evaluate(() => /OPERATIONS SYSTEM|__bundler|syWarnText/.test(document.documentElement.innerHTML)).catch(() => false))) {
     console.error('The CRM site password was not accepted. Check the CRM_SITE_PASSWORD secret.'); await browser.close(); process.exit(1);
   }
 }
